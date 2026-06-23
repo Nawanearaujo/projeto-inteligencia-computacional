@@ -1,7 +1,7 @@
 
 venv/**/*
+models/saved/*
 =======
-venv/
 __pycache__/
 data/raw/*
 data/processed/*
