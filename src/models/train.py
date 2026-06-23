@@ -7,15 +7,18 @@ from sklearn.linear_model import LogisticRegression #utilizar a regressão logí
 from sklearn.ensemble import RandomForestClassifier #utilizar o Random Forest do Sckit-Learn
 import joblib #Bibloetaca para salvar o melhor algoritmo
 from sklearn.metrics import accuracy_score
+import src.preprocessing.clean_data as clean_data
+import sys
 
 # 1. Descobre a pasta exata onde este arquivo de código está salvo
-diretorio_atual = Path(__file__).parent
+#diretorio_atual = Path(__file__).parent
 
 # 2. Junta essa pasta com o nome do arquivo CSV
-caminho_csv = diretorio_atual / "heart.csv"
+#caminho_csv = diretorio_atual / "heart.csv"
 
 # 3. Carrega o arquivo usando o caminho completo e seguro
-dados_pacientes = pd.read_csv(caminho_csv)
+print("=== O PYTHON QUE ESTÁ RODANDO É ESTE: ===", sys.executable)
+dados_pacientes = pd.read_csv(clean_data.clean_and_prepare_data())
 dados_pacientes = dados_pacientes.drop_duplicates()
 print(f"\nRestaram {dados_pacientes.shape[0]} linhas reais.")
 print(dados_pacientes.head())
@@ -83,4 +86,3 @@ if __name__ == "__main__":
 
     except FileNotFoundError as erro_arquivo:
         print(f"\n[AVISO]: {erro_arquivo}")
-        print("Para testar localmente agora, crie as pastas 'data/raw/' e coloque o arquivo 'heart.csv' dentro delas.")

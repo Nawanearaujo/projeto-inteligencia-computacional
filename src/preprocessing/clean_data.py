@@ -39,15 +39,24 @@ def clean_and_prepare_data():
     
     # 5. Unindo todas as tabelas em uma única tabela 
     tabela_final = pd.concat(lista_de_tabelas, ignore_index=True)
+
+    # Preenche os valores numéricos ausentes (NaN) com a mediana de cada coluna
+    for col in tabela_final.columns:
+        if col != 'target':
+            mediana = tabela_final[col].median()
+            tabela_final[col] = tabela_final[col].fillna(mediana)
     
-    # 6. remove todas as linhas que vieram totalmente vazias
-    tabela_final = tabela_final.dropna(how='all')
+    # Qualquer valor > 0 na coluna 'target' será considerado como 1 (risco cardíaco)
+    tabela_final['target'] = tabela_final['target'].apply(lambda x: 1 if x > 0 else 0)
+
+    tabela_final = tabela_final.dropna(subset=['target'])
     
     # 7. Salva o resultado na pasta 'processed'
     os.makedirs(os.path.dirname(processed_file), exist_ok=True)
     tabela_final.to_csv(processed_file, index=False)
+    print(f"-> Base limpa e unificada salva em: {processed_file}")
     
-    print(f"\nSucesso! Os dados foram limpos, unificados e salvos em: {processed_file}")
+    return processed_file
 
 if __name__ == "__main__":
     clean_and_prepare_data()
