@@ -8,11 +8,10 @@ from sklearn.linear_model import LogisticRegression #utilizar a regressão logí
 from sklearn.ensemble import RandomForestClassifier #utilizar o Random Forest do Sckit-Learn
 import joblib #Bibloetaca para salvar o melhor algoritmo
 from sklearn.metrics import accuracy_score
-import src.preprocessing.clean_data as clean_data
 
-dados_pacientes = pd.read_csv(clean_data.clean_and_prepare_data())
-dados_pacientes = dados_pacientes.drop_duplicates()
-print(f"\nRestaram {dados_pacientes.shape[0]} linhas reais.")
+
+dados_pacientes = pd.read_csv('data/processed/heart_disease_features.csv')
+
 print(dados_pacientes.head())
 
 # Dividir os dados em treino (80%) e teste (20%)
