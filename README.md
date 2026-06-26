@@ -3,7 +3,7 @@
 Este projeto foi desenvolvido como requisito avaliativo para a disciplina de Inteligência Computacional do curso de Bacharelado em Sistemas de Informação no Instituto Federal de Alagoas (IFAL) - Campus Arapiraca. O foco é aplicar técnicas de Machine Learning para a área da saúde, utilizando boas práticas de Engenharia de Software e governança de dados.
 
 Professor: Edvonaldo Horácio dos Santos  
-Equipe: Annne Karolyne Caetano, Julio Cesar dos Santos Oliveira, Marcos Felype Silva e Nawane Araújo dos Santos 
+Equipe: Annne Karolyne Caetano, Julio Cesar dos Santos Oliveira, Marcos Felype Silva e Nawane Araújo dos Santos
 
 ---
 
@@ -21,51 +21,56 @@ O repositório segue um padrão modular para separar dados, código-fonte e docu
 
 projeto-inteligencia-computacional/
 ├── data/
-│   ├── raw/                 # Dados brutos originais da UCI (.data) e arquivo unificado
-│   └── processed/           # Dados limpos, pré-processados e finalizados (.csv)
-├── notebooks/               # Notebooks para Análise Exploratória (EDA)
+│ ├── raw/ # Dados brutos originais da UCI (.data) e arquivo unificado
+│ └── processed/ # Dados limpos, pré-processados e finalizados (.csv)
+├── notebooks/ # Notebooks para Análise Exploratória (EDA)
 ├── src/
-│   ├── ingestion/           # Scripts de coleta e consolidação inicial de dados
-│   ├── preprocessing/       # Rotinas de limpeza avançada e tratamento de nulos
-│   ├── features/            # Engenharia de features e transformações matemáticas
-│   ├── models/              # Treinamento de algoritmos de Machine Learning
-│   └── evaluation/          # Métricas de validação dos modelos
-├── metrics/                 # Gráficos e resultados de avaliação salvos
-├── models_saved/            # Modelos treinados persistidos (joblib/pickle)
-├── requirements.txt         # Dependências do projeto
-└── README.md                # Documentação principal
+│ ├── ingestion/ # Scripts de coleta e consolidação inicial de dados
+│ ├── preprocessing/ # Rotinas de limpeza avançada e tratamento de nulos
+│ ├── features/ # Engenharia de features e transformações matemáticas
+│ ├── models/ # Treinamento de algoritmos de Machine Learning
+│ └── evaluation/ # Métricas de validação dos modelos
+├── metrics/ # Gráficos e resultados de avaliação salvos
+├── models_saved/ # Modelos treinados persistidos (joblib/pickle)
+├── requirements.txt # Dependências do projeto
+└── README.md # Documentação principal
 
 ---
 
 ## 3. Configuração do Ambiente e Execução
 
 ### 3.1 Pré-requisitos e Bibliotecas
-* Python 3.10 ou superior.
-* Gerenciador de versão: Git.
-* Bibliotecas principais de manipulação: `pandas`, `numpy`, `os`.
-* Bibliotecas principais de Machine Learning e Visualização: `scikit-learn`, `matplotlib`, `seaborn`.
-*Biblioteca para execução de testes: `pytest`
+
+- Python 3.10 ou superior.
+- Gerenciador de versão: Git.
+- Bibliotecas principais de manipulação: `pandas`, `numpy`, `os`.
+- Bibliotecas principais de Machine Learning e Visualização: `scikit-learn`, `matplotlib`, `seaborn`.
+  \*Biblioteca para execução de testes: `pytest`
 
 ### 3.2 Como Executar (Comandos do Git e do Ambiente Virtual)
 
 Clonando o repositório para a máquina local:
+
 ```powershell
 git clone <URL_DO_REPOSITORIO>
 cd projeto-inteligencia-computacional
 ```
 
 Criar e ativar o ambiente virtual para isolar as dependências:
+
 ```powershell
 python -m venv venv
 .\venv\Scripts\activate
 ```
 
 Instalar as bibliotecas necessárias:
+
 ```powershell
 pip install -r requirements.txt
 ```
 
 Executar o script de ingestão para gerar a base bruta unificada:
+
 ```powershell
 python src/ingestion/ingestion.py
 ```
@@ -75,16 +80,43 @@ python src/ingestion/ingestion.py
 ## 4. Etapas do Desenvolvimento
 
 ### 4.1 Coleta e Ingestão de Dados (`src/ingestion/`)
+
 Os dados brutos originais são fragmentados por hospitais (Cleveland, Hungria, Suíça e V.A. Medical Center). O script de ingestão consolida essas quatro bases em um único arquivo, garantindo a imutabilidade da fonte original. As seguintes ações são executadas nesta etapa inicial:
 *Padronização de Colunas: Aplicação do dicionário de dados oficial com os 14 atributos padrão da literatura médica (age, sex, cp, trestbps, etc.).
 *Mapeamento de Nulos: Conversão do caractere `?` (dado faltante na base original) para a estrutura `NaN` do Pandas.
-*Consolidação: Concatenação das bases resultando no arquivo unificado `heart_disease_raw.csv` alocado na pasta `data/raw/`.
+\*Consolidação: Concatenação das bases resultando no arquivo unificado `heart_disease_raw.csv` alocado na pasta `data/raw/`.
 
 ### 4.2 Análise Exploratória de Dados - EDA (`notebooks/`)
 
-### 4.3 ré-processamento (`src/preprocessing/`)
+Esta etapa compreende o diagnóstico visual e a investigação estatística inicial do comportamento das variáveis contidas na base consolidada (heart_disease_raw.csv) antes de qualquer transformação algorítmica. Utilizando bibliotecas como matplotlib e seaborn, os seguintes diagnósticos foram implementados para orientar as estratégias de tratamento:
+
+Mapeamento de Distribuição e Anomalias: Construção de histogramas acoplados à estimativa de densidade de kernel (KDE) para analisar o comportamento estatístico da idade (age) e do colesterol (chol). Esta visualização permitiu identificar uma grave anomalia clínica: um pico artificial de registros com colesterol igual a zero, caracterizando dados omissos mascarados.
+
+Estudo Oclusivo por Categoria: Aplicação de diagramas de caixa (boxplots) para confrontar as distribuições dos quartis de colesterol frente ao rótulo binário da variável alvo (target), avaliando visualmente a separabilidade dos dados.
+
+Mensuração de Correlação Linear: Geração de um mapa de calor (heatmap) baseado no coeficiente de Pearson abrangendo os atributos numéricos centrais. O diagrama foi configurado com anotações explícitas dos coeficientes para avaliar a força e a direção das associações lineares diretas com o risco cardíaco.
+
+### 4.3 Pré-processamento (`src/preprocessing/`)
+
+Esta etapa descreve a engenharia de higienização automatizada desenvolvida no script clean_and_prepare_data(). O objetivo é mitigar as inconsistências detectadas na EDA e converter o arranjo bruto em uma matriz matemática perfeitamente estruturada na pasta data/processed/heart_disease_cleaned.csv. O pipeline executa sequencialmente as seguintes operações:
+
+Correção de Anomalias e Imputação: Remoção automática de linhas inteiramente nulas e substituição cirúrgica dos valores artificiais de colesterol igual a zero por pd.NA. Posteriormente, o script aplica um laço de repetição que preenche todos os dados ausentes utilizando a mediana populacional calculada de cada atributo.
+
+Binarização do Alvo (Target): Mapeamento da variável de saída — originalmente distribuída em uma escala de gravidade clínica de 0 a 4 — para uma representação estritamente binária ($0$ para ausência e $1$ para presença de risco cardíaco), adequando o problema para classificadores supervisionados.
+
+Codificação Categórica Neutra: Conversão das colunas nominais qualitativas (cp, restecg, slope, thal) em strings para aplicação da técnica de One-Hot Encoding via pd.get_dummies(). O parâmetro drop_first=True é acionado para remover a primeira coluna derivada de cada categoria, eliminando redundâncias matemáticas (multicolinearidade).
+
+Normalização Min-Max: Ajuste de escala proporcional para os atributos contínuos (age, trestbps, chol, thalach, oldpeak), comprimindo seus valores estritamente dentro do intervalo estável de $[0.0, 1.0]$ para otimizar a velocidade de convergência dos futuros modelos. As variáveis booleanas geradas são salvas explicitamente como inteiros binários ($0$ ou $1$).
 
 ### 4.4 Engenharia de Features (`src/features/`)
+
+Esta etapa compreende o isolamento estatístico e a redução de dimensionalidade da base de dados limpa, executados de forma automatizada pelo script select_best_features(). O foco é garantir a parcimônia do modelo preditivo, alimentando a próxima camada apenas com os recursos de alto valor informativo, persistidos em heart_disease_features.csv. A rotina estrutura-se em:
+
+Extração de Relevância Nativa: Instanciação e ajuste de um classificador Random Forest composto por 100 estimadores (árvores de decisão) acoplado a uma semente de inicialização fixa (random_state=42) para assegurar a total reprodutibilidade do experimento. O algoritmo calcula matematicamente a importância de cada recurso por meio do critério de Redução da Impureza de Gini (Mean Decrease in Impurity - MDI).
+
+Aplicação de Limiar de Corte Otimizado: Ordenação decrescente e filtragem dos atributos a partir de um limiar de corte estatístico estabelecido criteriosamente em 0.015. Esta configuração permite descartar componentes puramente ruidosos ou de baixa variância informativa (como restecg_2 e slope_3).
+
+Equilíbrio Clínico-Matemático: Redução da dimensão original de 18 atributos para 16 variáveis altamente preditivas. Este limiar específico garante o resgate automático de colunas vitais consagradas pela literatura médica da UCI (como o número de vasos coloridos ca e anomalias de cintilografia thal), blindando o conjunto contra o sobreajuste (overfitting).
 
 ### 4.5 Modelagem e Treinamento (`src/models/`)
 
@@ -100,10 +132,12 @@ Os testes criados validam desde a entrada dos dados brutos até a exportação d
 
 Antes de executar os testes, certifique-se de que o ambiente virtual (`.venv`) está ativado e com as dependências instaladas (como mencionado anteriormente). Se necessário, instale os pacotes de teste executando:
 
-```bash
+````bash
 pip install pytest pandas scikit-learn joblib ```
-```
+````
+
 ---
+
 ### Como executar:
 
 Certifique-se de que seu terminal está posicionado na raiz da pasta do projeto (projeto-inteligencia-computacional) e execute o comando abaixo:
@@ -111,6 +145,7 @@ Certifique-se de que seu terminal está posicionado na raiz da pasta do projeto 
 ```bash
 python -m pytest
 ```
+
 Para uma execução detalhada que mostra o nome de cada teste que foi aprovado, utilize o modo verboso:
 
 ```bash
@@ -122,11 +157,14 @@ python -m pytest -v
 Os testes estão localizados na pasta tests/ e cobrem os seguintes cenários:
 test_ingestion.py: Garante que os dados dos 4 hospitais estão sendo carregados corretamente e unificados sem perda de integridade.
 
-#### test_clean_data.py: 
+#### test_clean_data.py:
+
 Valida o pipeline de limpeza, verificando o tratamento de valores nulos e se a binarização da variável target ocorreu com sucesso.
 
-#### test_build_features.py: 
+#### test_build_features.py:
+
 Verifica a seleção de variáveis importantes utilizando o algoritmo Random Forest, garantindo que o formato final dos dados esteja correto.
 
-#### test_train.py: 
+#### test_train.py:
+
 Avalia o treinamento dos modelos e certifica que os arquivos finais .joblib são gerados e salvos corretamente na pasta de artefatos.
