@@ -44,6 +44,7 @@ projeto-inteligencia-computacional/
 * Gerenciador de versão: Git.
 * Bibliotecas principais de manipulação: `pandas`, `numpy`, `os`.
 * Bibliotecas principais de Machine Learning e Visualização: `scikit-learn`, `matplotlib`, `seaborn`.
+*Biblioteca para execução de testes: `pytest`
 
 ### 3.2 Como Executar (Comandos do Git e do Ambiente Virtual)
 
@@ -88,3 +89,44 @@ Os dados brutos originais são fragmentados por hospitais (Cleveland, Hungria, S
 ### 4.5 Modelagem e Treinamento (`src/models/`)
 
 ### 4.6 Avaliação, Resultados e Discussão (`src/evaluation/`)
+
+## 5. Tests
+
+Com o objetivo de garantir confiabilidade e reprodutibilidade do projeto, implementou-se testes automáticos com a aplicação do framework `pytest`.
+
+Os testes criados validam desde a entrada dos dados brutos até a exportação do modelo treinado. Dessa forma, cada arquivo test faz referência a um das camadas anteriores (features, ingestion, models e preprocessing), testanto cenários de falhas e sucesso de suas funções.
+
+### Pré-requisitos
+
+Antes de executar os testes, certifique-se de que o ambiente virtual (`.venv`) está ativado e com as dependências instaladas (como mencionado anteriormente). Se necessário, instale os pacotes de teste executando:
+
+```bash
+pip install pytest pandas scikit-learn joblib ```
+```
+---
+### Como executar:
+
+Certifique-se de que seu terminal está posicionado na raiz da pasta do projeto (projeto-inteligencia-computacional) e execute o comando abaixo:
+
+```bash
+python -m pytest
+```
+Para uma execução detalhada que mostra o nome de cada teste que foi aprovado, utilize o modo verboso:
+
+```bash
+python -m pytest -v
+```
+
+### Estrutura e Escopo dos Testes
+
+Os testes estão localizados na pasta tests/ e cobrem os seguintes cenários:
+test_ingestion.py: Garante que os dados dos 4 hospitais estão sendo carregados corretamente e unificados sem perda de integridade.
+
+#### test_clean_data.py: 
+Valida o pipeline de limpeza, verificando o tratamento de valores nulos e se a binarização da variável target ocorreu com sucesso.
+
+#### test_build_features.py: 
+Verifica a seleção de variáveis importantes utilizando o algoritmo Random Forest, garantindo que o formato final dos dados esteja correto.
+
+#### test_train.py: 
+Avalia o treinamento dos modelos e certifica que os arquivos finais .joblib são gerados e salvos corretamente na pasta de artefatos.
