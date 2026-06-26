@@ -120,9 +120,22 @@ Equilíbrio Clínico-Matemático: Redução da dimensão original de 18 atributo
 
 ### 4.5 Modelagem e Treinamento (`src/models/`)
 
+Esta etapa envolve o treinamento dos modelos escolhidos. Para este objetivo, foram escolhidos os modelos Regressão Logística e Random Forest. A escolha se deu a partir da relação entre as variáveis de entrada (como colesterol, idade, pressão) e o risco cardíaco. A finalidade é investigar o comportamento do algoritmo com modelos lineares e não lineares. 
+
+No caso da Regressão Logística, a relação é linear, ou seja, o aumento de variáveis como o colesterol e a pressão tem o mesmo impacto para o risco cardíaco, independentemente do contexto. Por exemplo: caso se constate que o aumento de uma determinada taxa do colesterol de um paciente aumenta o risco cardíaco em 5%, a Regressão Logística assume que esse aumento de 5% vale tanto para um jovem de 20 anos ativo quanto para um idoso de 75 anos sedentário. 
+
+Já na Random Forest, a relação é não linear. Este algoritmo trabalha com árvores de decisão, que realizam análises mais complexas entre as variáveis. Na prática, se assume que um paciente pode até ter um colesterol alto, mas o risco cardíaco só aparecerá se ele tiver uma idade avançada e um tipo de dor no peito específica.
+
+
 ### 4.6 Avaliação, Resultados e Discussão (`src/evaluation/`)
 
-## 5. Tests
+Inicialmente, utilizou-se uma base pequena de Cleveland (303 linhas). Com ela, a Regressão Logística tinha vencido, com 80,33% de acurácia contra 75,41% da Random Forest. Isso se justifica porque a Random Forest não tinha dados suficientes e estava sofrendo de Overfitting (decorando a base). 
+
+No entanto, após a ingestão das bases de dados dos hospitais de Cleveland, Hungria, Suíça e VA Long Beach, o pré-processamento correto e a engenharia de features, o cenário mudou. Agora o dataset aumentou para 920 pacientes, permitindo a geração correta das árvores de decisão definidas no código. Já com o processo de engenharia de features, foi possível tornar binárias colunas-chave como dor no peito. 
+
+Esse tipo de abordagem é excelente para a Random Forest, ao contrário da Regressão Logística, que sofre com as múltiplas análises matemáticas necessárias. Além disso, há colunas como ca (número de vasos sanguíneos principais coloridos por fluoroscopia, que varia de 0 a 3) em que a quantidade de vasos sanguíneos não é linear, situação que otimiza o algoritmo de Random Forest. No fim, a Random Forest teve 82,07% de acurácia, contra 79,35% da Regressão Logística.
+
+## 5. Testes
 
 Com o objetivo de garantir confiabilidade e reprodutibilidade do projeto, implementou-se testes automáticos com a aplicação do framework `pytest`.
 

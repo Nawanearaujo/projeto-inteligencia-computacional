@@ -43,14 +43,14 @@ def treinar_random_forest(X_treino, Y_treino) -> RandomForestClassifier:
 
   return modelo_forest
 
-def salvar_modelo_campeao(modelo, nome_arquivo: str, pasta_destino: str = 'models/saved'):
+def salvar_modelo_treinado(modelo, nome_arquivo: str, pasta_destino: str = 'models_saved'):
 
     if not os.path.exists(pasta_destino):
         os.makedirs(pasta_destino)
 
     caminho_completo = os.path.join(pasta_destino, nome_arquivo)
 
-    # salva o modelo campeão em disco
+    # salva o modelo treinado em disco
     joblib.dump(modelo, caminho_completo)
 
 # Bloco de execução principal
@@ -75,7 +75,7 @@ if __name__ == "__main__":
         modelo_rl = treinar_regressao_logistica(X_treino, Y_treino)
         modelo_rf = treinar_random_forest(X_treino, Y_treino)
 
-        # TEstando os modelos
+        # Testando os modelos
         previsoes_rl = modelo_rl.predict(X_teste)
         previsoes_rf = modelo_rf.predict(X_teste)
 
@@ -83,15 +83,18 @@ if __name__ == "__main__":
         acuracia_rl = accuracy_score(Y_teste, previsoes_rl)
         acuracia_rf = accuracy_score(Y_teste, previsoes_rf)
 
-        print(f"\nAcurácia Preliminar - Regressão Logística: {acuracia_rl:.4f}")
-        print(f"\nAcurácia Preliminar - Random Forest: {acuracia_rf:.4f}")
+        salvar_modelo_treinado(modelo_rl, "modelo_regressao_logistica.joblib")
+        salvar_modelo_treinado(modelo_rf, "modelo_random_forest.joblib")
+
+        print(f"\nAcurácia - Regressão Logística: {acuracia_rl:.4f}")
+        print(f"\nAcurácia - Random Forest: {acuracia_rf:.4f}")
 
         if acuracia_rl >= acuracia_rf:
             print("\n-> Vencedor: Regressão Logística!")
-            salvar_modelo_campeao(modelo_rl, "modelo_regressao_logistica.joblib")
+            #salvar_modelo_campeao(modelo_rl, "modelo_regressao_logistica.joblib")
         else:
             print("\n-> Vencedor: Random Forest!")
-            salvar_modelo_campeao(modelo_rf, "modelo_random_forest.joblib")
+            #salvar_modelo_campeao(modelo_rf, "modelo_random_forest.joblib")
 
 
         print("\n=== PIPELINE FINALIZADO COM SUCESSO ===")
